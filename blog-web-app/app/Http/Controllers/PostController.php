@@ -34,7 +34,8 @@ class PostController extends Controller
             'content' => 'required',
         ]);
 
-        Post::create($request->all());
+        $data = $request->except(['_token', '_method']);
+        $post = Post::create($data);
         return redirect()->route('posts.index');
     }
 
