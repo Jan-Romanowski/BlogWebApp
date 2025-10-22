@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: laravel_app
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    # --- ИСПРАВЛЕНИЕ: ДОБАВЛЯЕМ ПРОБРОС ПОРТОВ ---
+    # Связывает порт 8080 на хосте с портом 8000 в контейнере.
+    # Вы можете использовать 8080, чтобы избежать конфликтов с другими приложениями (например, XAMPP/WAMP).
+    ports:
+      - "8070:8000"
+    # ---------------------------------------------
+    depends_on:
+      - db
+    networks:
+      - laravel
+
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: blogwebapp
+      POSTGRES_USER: bloguser
+      POSTGRES_PASSWORD: strongpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - laravel
+
+volumes:
+  db_data:
+
+networks:
+  laravel:
+    driver: bridge
